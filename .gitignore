@@ -16,3 +16,12 @@ Modules/sap
 Modules/time
 Modules/rss
 Modules/adminusers
+/.buildpath
+/.settings/org.eclipse.php.core.prefs
+/.settings/org.eclipse.php.debug.core.Debug_Process_Preferences.prefs
+/.settings/org.eclipse.php.server.core.phpServersPrefs.prefs
+/netbeans/nbproject/private/config.properties
+/netbeans/nbproject/private/private.properties
+/netbeans/nbproject/private/private.xml
+/netbeans/nbproject/project.properties
+/netbeans/nbproject/project.xml
