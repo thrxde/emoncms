@@ -24,13 +24,13 @@ global $path;
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>Modules/vis/visualisations/multigraph.js"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>Modules/vis/multigraph_api.js"></script>
 
-<h2>Visualisations</h2>
+<h2><?php echo _("Visualisations"); ?></h2>
 
 <div style="float:left">
 
 <div style="width:320px; background-color:#efefef; margin-bottom:10px; border: 1px solid #ddd;">
   <div style="padding:10px;  border-top: 1px solid #fff">
-    <div style="float:left; padding-top:2px; font-weight:bold;">1) Select visualisation: </div>
+    <div style="float:left; padding-top:2px; font-weight:bold;">1) <?php echo _("Select visualisation:")?> </div>
     <div style="float:right;">
       <span id="select"></span>
     </div>
@@ -40,9 +40,9 @@ global $path;
 
 <div style="width:320px; background-color:#efefef; margin-bottom:10px; border: 1px solid #ddd;">
   <div style="padding:10px;  border-top: 1px solid #fff">
-    <div style="padding-top:2px; font-weight:bold;">2) Set options: </div><br>
+    <div style="padding-top:2px; font-weight:bold;">2) <?php echo _("Set options:")?> </div><br>
     <div id="box-options" ></div><br>
-    <p style="font-size:12px; color:#444;"><b>Note:</b> If a feed does not appear in the selection box, check that the type has been set on the feeds page.</p>
+    <p style="font-size:12px; color:#444;"><b><?php echo _("Note:");?></b> <?php echo _("If a feed does not appear in the selection box, check that the type has been set on the feeds page."); ?></p>
   </div>
 </div>
 
@@ -50,8 +50,8 @@ global $path;
   <div style="padding:10px;  border-top: 1px solid #fff">
     <div style="float:left; padding-top:2px; font-weight:bold;">3) </div>
     <div style="float:right;">
-    <input id="viewbtn" type="submit" value="View" class="btn btn-info" />
-    <input id="fullscreen" type="submit" value="Full screen" class="btn btn-info" />
+    <input id="viewbtn" type="submit" value="<?php echo _("View"); ?>" class="btn btn-info" />
+    <input id="fullscreen" type="submit" value="<?php echo _("Full screen"); ?>" class="btn btn-info" />
     </div>
     <div style="clear:both"></div>
   </div>
@@ -59,7 +59,7 @@ global $path;
 
 <div style="width:320px; background-color:#efefef; margin-bottom:10px; border: 1px solid #ddd;">
   <div style="padding:10px;  border-top: 1px solid #fff">
-    <div style="padding-top:2px; font-weight:bold;">Embed in your website: </div><br>
+    <div style="padding-top:2px; font-weight:bold;"><?php echo _("Embed in your website:"); ?> </div><br>
     <textarea id="embedcode" style="width:290px; height:120px;" readonly="readonly"></textarea>
   </div>
 </div>
@@ -97,7 +97,7 @@ global $path;
 
   // 1) ON CLICK OF VISUALISATION OPTION:
 
-  $("#visselect").click(function(){
+  $("#visselect").change(function(){
 
     // Custom multigraph visualisation items
     if ($(this).val()=="multigraph")
@@ -132,7 +132,7 @@ global $path;
 
     $("#visiframe").html('<iframe style="width:580px; height:400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="'+visurl+'&embed=1"></iframe>');
 
-    if (publicfeed == 1) $("#embedcode").val('<iframe style="width:580px; height:400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="'+visurl+'&embed=1"></iframe>'); else $("#embedcode").val('Some of the feeds selected are not public, to embed a visualisation publicly first make the feeds that you want to use public.\n\nTo embed privately:\n\n<iframe style="width:580px; height:400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="'+visurl+'&embed=1&apikey='+apikey+'"></iframe>');
+    if (publicfeed == 1) $("#embedcode").val('<iframe style="width:580px; height:400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="'+visurl+'&embed=1"></iframe>'); else $("#embedcode").val('<?php echo addslashes(_("Some of the feeds selected are not public, to embed a visualisation publicly first make the feeds that you want to use public."));?>\n\n<?php echo _("To embed privately:");?>\n\n<iframe style="width:580px; height:400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="'+visurl+'&embed=1&apikey='+apikey+'"></iframe>');
 
   });
 

@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: emoncms3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-18 18:43+0100\n"
-"PO-Revision-Date: 2012-10-18 18:43+0100\n"
-"Last-Translator: ilde <i.martinez@ismsolar.com>\n"
+"POT-Creation-Date: 2013-04-28 02:18+0100\n"
+"PO-Revision-Date: 2013-04-28 02:19+0100\n"
+"Last-Translator: VIALAT Mickael <contact@planete-domotique.com>\n"
 "Language-Team: Baptiste Gaultier (Télécom Bretagne) <baptiste."
 "gaultier@telecom-bretagne.eu>\n"
 "Language: fr_FR\n"
@@ -14,199 +14,215 @@ msgstr ""
 "X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.5\n"
 "X-Poedit-SearchPath-0: ../../..\n"
 
-#: ../../../api_view.php:29
-msgid "API Helper"
-msgstr "Aide de l'API"
+#: ../../../vis_controller.php:14
+msgid "Restricted access"
+msgstr "Accès restreint"
 
-#: ../../../api_view.php:31
+#: ../../../vis_main_view.php:27
+msgid "Visualisations"
+msgstr "Visualisation des données"
+
+#: ../../../vis_main_view.php:33
+msgid "Select visualisation:"
+msgstr "Type de visualisation :"
+
+#: ../../../vis_main_view.php:43
+msgid "Set options:"
+msgstr "Options :"
+
+#: ../../../vis_main_view.php:45
+msgid "Note:"
+msgstr "Remarque :"
+
+#: ../../../vis_main_view.php:45
 msgid ""
-"API keys are used to give authenticated access without login in via a normal "
-"session."
+"If a feed does not appear in the selection box, check that the type has been "
+"set on the feeds page."
 msgstr ""
-"Les cl&eacute;s API sont utiles pour donner un acc&egrave;s &agrave; emoncms "
-"sans avoir besoin de se connecter."
+"Si un flux n'apparait pas dans la liste, pensez à vérifier que vous avez "
+"défini son type dans la page \"Flux\""
 
-#: ../../../api_view.php:34
-msgid "Read only access: "
-msgstr "Acc&egrave;s en lecture seule : "
-
-#: ../../../api_view.php:36
-msgid "Allows to access in read only mode"
-msgstr "Permet l'acc&egrave;s en lecture seule"
-
-#: ../../../api_view.php:40 ../../../api_view.php:53
-msgid "new"
-msgstr "g&eacute;n&eacute;rer"
-
-#: ../../../api_view.php:47
-msgid "Write only access: "
-msgstr "Acc&egrave;s en &eacute;criture : "
-
-#: ../../../api_view.php:49
-msgid "Keep secret. Write mode access"
-msgstr "Ne pas divulguer. Cl&eacute; API avec droits d'&eacute;criture"
-
-#: ../../../api_view.php:59
-msgid "Post API"
-msgstr "API"
-
-#: ../../../api_view.php:70
-msgid ""
-"Example: Click or copy this to your web browser or send from your monitoring "
-"hardware"
-msgstr ""
-"Exemple : Cliquer ou copier ceci dans votre navigateur ou depuis votre "
-"capteur"
-
-#: ../../../api_view.php:77 ../../../api_view.php:90
-msgid "try me"
-msgstr "tester"
-
-#: ../../../api_view.php:82
-msgid "Using Node addressing"
-msgstr ""
-
-#: ../../../api_view.php:87
-msgid "Change node_id from URL with the node identification"
-msgstr ""
-
-#: ../../../api_view.php:95
-msgid "Visualisation API"
-msgstr "API de visualisation"
-
-#: ../../../api_view.php:96
-msgid ""
-"These are all the visualisations that are available in emoncms3. To view a "
-"visualisation enter in a relevant feedid in the underlined boxes below and "
-"then click on the > button."
-msgstr ""
-"Voici les visulations disponibles dans emoncms3. Veuillez entrer un "
-"identifiant de flux dans les champs ci-dessous puis cliquer sur >"
-
-#: ../../../api_view.php:101
-msgid "Name"
-msgstr "Nom"
-
-#: ../../../api_view.php:104
-msgid "URL"
-msgstr "Lien"
-
-#: ../../../api_view.php:107
+#: ../../../vis_main_view.php:53
 msgid "View"
 msgstr "Afficher"
 
-#: ../../../api_view.php:113
-msgid "Real-time graph"
-msgstr "Temps-r&eacute;el"
+#: ../../../vis_main_view.php:54
+msgid "Full screen"
+msgstr "Plein Ecran"
 
-#: ../../../api_view.php:128
-msgid "Raw data graph"
-msgstr "Donn&eacute;es brutes"
+#: ../../../vis_main_view.php:62
+msgid "Embed in your website:"
+msgstr "Intégrer dans votre site Web :"
 
-#: ../../../api_view.php:143
-msgid "Bar graph"
-msgstr "Histogramme"
-
-#: ../../../api_view.php:158
-msgid "Smoothie"
-msgstr ""
-
-#: ../../../api_view.php:173
-msgid "All time histogram"
-msgstr "Histogramme complet"
-
-#: ../../../api_view.php:188
-msgid "Daily histogram"
-msgstr "Histogramme quotidien"
-
-#: ../../../api_view.php:207
-msgid "Zoom"
-msgstr "Zoom"
-
-#: ../../../api_view.php:223
-msgid "kWh/d Comparison"
-msgstr "Comparaison kWh/j"
-
-#: ../../../api_view.php:244
-msgid "Stacked"
-msgstr ""
-
-#: ../../../api_view.php:261
-msgid "Threshold"
-msgstr ""
-
-#: ../../../api_view.php:280
-msgid "Simple zoom"
-msgstr ""
-
-#: ../../../api_view.php:297
-msgid "Bar graph (ordered by height)"
-msgstr "Histogramme (tri&eacute; par hauteur)"
-
-#: ../../../api_view.php:312
-msgid "Threshold ordered by height"
-msgstr "Seuils (tri&eacute;s par hauteur)"
-
-#: ../../../api_view.php:332
-msgid "Multigraph"
-msgstr "Graphiques multiples"
-
-#: ../../../api_view.php:346
-msgid "Datapoint Editor"
-msgstr "&Eacute;diteur de points"
-
-#: ../../../api_view.php:360
-msgid "Other options:"
-msgstr "Options"
-
-#: ../../../api_view.php:365
-msgid "Hide menu"
-msgstr "Cacher le menu"
-
-#: ../../../api_view.php:367
-#, fuzzy
+#: ../../../vis_main_view.php:135
 msgid ""
-"Hide the top menu and footer by adding the attribute &embed=1 to the URL."
+"Some of the feeds selected are not public, to embed a visualisation publicly "
+"first make the feeds that you want to use public."
 msgstr ""
-"Cacher le menu et le pied de page en ajoutant l'attribut <i>&embed=1</i> "
-"&agrave; l'adresse."
+"Les données du flux sélectionné ne sont pas configurées comme public. Pour "
+"pouvoir afficher cette visualisation sur un site public, il faut "
+"reconfigurer ces données."
 
-#: ../../../api_view.php:372
-msgid "Share"
-msgstr "Partager"
+#: ../../../vis_main_view.php:135
+msgid "To embed privately:"
+msgstr "Pour une intégration privée :"
 
-#: ../../../api_view.php:374
-msgid "To share a visualisation use your read apikey. Add the attribute "
-msgstr ""
-"Pour partager un visulaisation, indiquer votre cl&eacute API (lecture). "
-"Ajouter"
+#: ../../../vis_menu.php:3
+msgid "Vis"
+msgstr "Visualisation"
 
-#: ../../../api_view.php:374
-msgid " to the URL"
-msgstr "&agrave; l'adresse"
+#: ../../../visualisations/editrealtime.php:54
+msgid "Save"
+msgstr "Sauvegarder"
 
-#: ../../../api_view.php:379
-msgid "Embed"
-msgstr ""
+#: ../../../visualisations/editrealtime.php:55
+msgid "Delete data in window"
+msgstr "Supprimer les données de cette fenêtre"
 
-#: ../../../api_view.php:386
+#: ../../../visualisations/editrealtime.php:61
+msgid "WARNING deleting feed data is permanent"
+msgstr "ATTENTION ! La suppression d'un flux de données est permanente "
+
+#: ../../../visualisations/editrealtime.php:64
+msgid "Are you sure you want to delete the data in this window?"
+msgstr "Etes vous sur de vouloir supprimer cette source ? "
+
+#: ../../../visualisations/editrealtime.php:67
+msgid "Cancel"
+msgstr "Annuler"
+
+#: ../../../visualisations/editrealtime.php:68
+msgid "Delete permanently"
+msgstr "Supprimer le flux ?"
+
+#: ../../../visualisations/realtime.php:36
+msgid "hour"
+msgstr "heure"
+
+#: ../../../visualisations/realtime.php:37
+#: ../../../visualisations/realtime.php:38
+#: ../../../visualisations/realtime.php:39
+msgid "min"
+msgstr "min"
+
+#~ msgid "API Helper"
+#~ msgstr "Aide de l'API"
+
+#~ msgid ""
+#~ "API keys are used to give authenticated access without login in via a "
+#~ "normal session."
+#~ msgstr ""
+#~ "Les cl&eacute;s API sont utiles pour donner un acc&egrave;s &agrave; "
+#~ "emoncms sans avoir besoin de se connecter."
+
+#~ msgid "Read only access: "
+#~ msgstr "Acc&egrave;s en lecture seule : "
+
+#~ msgid "Allows to access in read only mode"
+#~ msgstr "Permet l'acc&egrave;s en lecture seule"
+
+#~ msgid "new"
+#~ msgstr "g&eacute;n&eacute;rer"
+
+#~ msgid "Write only access: "
+#~ msgstr "Acc&egrave;s en &eacute;criture : "
+
+#~ msgid "Keep secret. Write mode access"
+#~ msgstr "Ne pas divulguer. Cl&eacute; API avec droits d'&eacute;criture"
+
+#~ msgid "Post API"
+#~ msgstr "API"
+
+#~ msgid ""
+#~ "Example: Click or copy this to your web browser or send from your "
+#~ "monitoring hardware"
+#~ msgstr ""
+#~ "Exemple : Cliquer ou copier ceci dans votre navigateur ou depuis votre "
+#~ "capteur"
+
+#~ msgid "try me"
+#~ msgstr "tester"
+
+#~ msgid ""
+#~ "These are all the visualisations that are available in emoncms3. To view "
+#~ "a visualisation enter in a relevant feedid in the underlined boxes below "
+#~ "and then click on the > button."
+#~ msgstr ""
+#~ "Voici les visulations disponibles dans emoncms3. Veuillez entrer un "
+#~ "identifiant de flux dans les champs ci-dessous puis cliquer sur >"
+
+#~ msgid "Name"
+#~ msgstr "Nom"
+
+#~ msgid "URL"
+#~ msgstr "Lien"
+
+#~ msgid "Real-time graph"
+#~ msgstr "Temps-r&eacute;el"
+
+#~ msgid "Raw data graph"
+#~ msgstr "Donn&eacute;es brutes"
+
+#~ msgid "Bar graph"
+#~ msgstr "Histogramme"
+
+#~ msgid "All time histogram"
+#~ msgstr "Histogramme complet"
+
+#~ msgid "Daily histogram"
+#~ msgstr "Histogramme quotidien"
+
+#~ msgid "Zoom"
+#~ msgstr "Zoom"
+
+#~ msgid "kWh/d Comparison"
+#~ msgstr "Comparaison kWh/j"
+
+#~ msgid "Bar graph (ordered by height)"
+#~ msgstr "Histogramme (tri&eacute; par hauteur)"
+
+#~ msgid "Threshold ordered by height"
+#~ msgstr "Seuils (tri&eacute;s par hauteur)"
+
+#~ msgid "Multigraph"
+#~ msgstr "Graphiques multiples"
+
+#~ msgid "Datapoint Editor"
+#~ msgstr "&Eacute;diteur de points"
+
+#~ msgid "Hide menu"
+#~ msgstr "Cacher le menu"
+
 #, fuzzy
-msgid "Reset Multigraph"
-msgstr "Graphiques multiples"
+#~ msgid ""
+#~ "Hide the top menu and footer by adding the attribute &embed=1 to the URL."
+#~ msgstr ""
+#~ "Cacher le menu et le pied de page en ajoutant l'attribut <i>&embed=1</i> "
+#~ "&agrave; l'adresse."
 
-#: ../../../api_view.php:388
+#~ msgid "Share"
+#~ msgstr "Partager"
+
+#~ msgid "To share a visualisation use your read apikey. Add the attribute "
+#~ msgstr ""
+#~ "Pour partager un visulaisation, indiquer votre cl&eacute API (lecture). "
+#~ "Ajouter"
+
+#~ msgid " to the URL"
+#~ msgstr "&agrave; l'adresse"
+
 #, fuzzy
-msgid "The multigraph can be reset using the &clear=1 attribute."
-msgstr ""
-"Le graphe peut &ecirc;tre r&eacute;initialis&eacute; en utilisant "
-"l'attribut  &clear=1."
+#~ msgid "Reset Multigraph"
+#~ msgstr "Graphiques multiples"
 
-#: ../../../vis_controller.php:24
-msgid "Restricted access"
-msgstr "Acc&egrave;s restreint"
+#, fuzzy
+#~ msgid "The multigraph can be reset using the &clear=1 attribute."
+#~ msgstr ""
+#~ "Le graphe peut &ecirc;tre r&eacute;initialis&eacute; en utilisant "
+#~ "l'attribut  &clear=1."
 
 #~ msgid "Emoncms database setup script"
 #~ msgstr "Script de configuration de la base de donn&eacute;e emoncms"
@@ -296,9 +312,6 @@ msgstr "Acc&egrave;s restreint"
 #~ msgid "Message successfully sent!"
 #~ msgstr "Message envoy&eacute; avec succ&egrave;s"
 
-#~ msgid " is"
-#~ msgstr "est"
-
 #~ msgid " is inactive"
 #~ msgstr "est inactif"
 
@@ -356,9 +369,6 @@ msgstr "Acc&egrave;s restreint"
 #~ msgid "Dashboards"
 #~ msgstr "Tableaux de bord"
 
-#~ msgid "Admin"
-#~ msgstr "Administration"
-
 #~ msgid "Account"
 #~ msgstr "Compte"
 
@@ -367,9 +377,6 @@ msgstr "Acc&egrave;s restreint"
 
 #~ msgid "Notification recipiants (To): "
 #~ msgstr "Destinataire : "
-
-#~ msgid "Save"
-#~ msgstr "Sauvegarder"
 
 #~ msgid "Notify "
 #~ msgstr "Notifier"
@@ -604,9 +611,6 @@ msgstr "Acc&egrave;s restreint"
 #~ msgid "Set notification behavior for this feed"
 #~ msgstr "Configurer les notifications pour ce flux"
 
-#~ msgid "Delete feed?"
-#~ msgstr "Supprimer le flux ?"
-
 #~ msgid "Are you sure you want to delete feed: "
 #~ msgstr "&Ecirc;tes vous s&ucirc;r de vouloir supprimer ce flux : "
 
@@ -654,9 +658,6 @@ msgstr "Acc&egrave;s restreint"
 
 #~ msgid "Reset process list?"
 #~ msgstr "R&eacute;initialis&eacute; les actions : "
-
-#~ msgid "Are you sure you want to delete input: "
-#~ msgstr "&Ecirc;tes vous s&ucirc;r de vouloir supprimer cette source ? "
 
 #~ msgid "Delete input?"
 #~ msgstr "Supprimer source ?"
@@ -785,9 +786,6 @@ msgstr "Acc&egrave;s restreint"
 
 #~ msgid "12 hours"
 #~ msgstr "12 horas"
-
-#~ msgid "1 hour"
-#~ msgstr "1 hora"
 
 #~ msgid "Date / Time"
 #~ msgstr "Fecha / Hora"
