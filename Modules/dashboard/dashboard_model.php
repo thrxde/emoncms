@@ -87,7 +87,9 @@ class Dashboard
       $userid = (int) $userid;
       $id = (int) $id;
       $height = (int) $height;
-      $content = preg_replace('/[^\w\s-.#<>?",;:=&\/%]/','',$content);
+      $content = $this->mysqli->real_escape_string($content);
+      
+      //echo $content;
 
       $result = $this->mysqli->query("SELECT * FROM dashboard WHERE userid = '$userid' AND id='$id'");
       $row = $result->fetch_array();
@@ -100,7 +102,7 @@ class Dashboard
     {
       $userid = (int) $userid;
       $id = (int) $id;
-      $fields = json_decode($fields);
+      $fields = json_decode(stripslashes($fields));
 
       $array = array();
 

@@ -35,7 +35,7 @@
   Other
 
   */
-
+      
   // Theme location
   $theme = "basic";
   
@@ -51,4 +51,3 @@
   // Skip database setup test - set to false once database has been setup.
   $dbtest = TRUE;
 
-?>

@@ -225,7 +225,7 @@ class Feed
   public function set_feed_fields($id,$fields)
   {
     $id = intval($id);
-    $fields = json_decode($fields);
+    $fields = json_decode(stripslashes($fields));
 
     $array = array();
 
@@ -275,11 +275,12 @@ class Feed
     $updatetime = date("Y-n-j H:i:s", $updatetime); 
     $this->mysqli->query("UPDATE feeds SET value = '$value', time = '$updatetime' WHERE id='$feedid'");
 
-    // Check feed event if event module is installed
-    // if (is_dir(realpath(dirname(__FILE__)).'/../event/')) {
-    //    require_once(realpath(dirname(__FILE__)).'/../event/event_model.php');
-    //    check_feed_event($feedid,$updatetime,$feedtime,$value);
-    // }
+    //Check feed event if event module is installed
+    if (is_dir(realpath(dirname(__FILE__)).'/../event/')) {
+      require_once(realpath(dirname(__FILE__)).'/../event/event_model.php');
+      $event = new Event($this->mysqli);
+      $event->check_feed_event($feedid,$updatetime,$feedtime,$value);
+    }
 
     return $value;
   }
@@ -307,11 +308,12 @@ class Feed
     $updatetime = date("Y-n-j H:i:s", $updatetime); 
     $this->mysqli->query("UPDATE feeds SET value = '$value', time = '$updatetime' WHERE id='$feedid'");
 
-    // Check feed event if event module is installed
-    // if (is_dir(realpath(dirname(__FILE__)).'/../event/')) {
-    //    require_once(realpath(dirname(__FILE__)).'/../event/event_model.php');
-    //    check_feed_event($feedid,$updatetime,$feedtime,$value);
-    // }
+    //Check feed event if event module is installed
+    if (is_dir(realpath(dirname(__FILE__)).'/../event/')) {
+      require_once(realpath(dirname(__FILE__)).'/../event/event_model.php');
+      $event = new Event($this->mysqli);
+      $event->check_feed_event($feedid,$updatetime,$feedtime,$value);
+    }
     
     return $value;
   }
@@ -351,32 +353,48 @@ class Feed
     $start = $start/1000; $end = $end/1000;
 
     $data = array();
-    if (($end - $start) > (5000) && $dp>0) //why 5000?
+    $range = $end - $start;
+    if ($range > 180000 && $dp > 0) // 50 hours
     {
-      $range = $end - $start;
       $td = $range / $dp;
-
+      $stmt = $this->mysqli->prepare("SELECT time, data FROM $feedname WHERE time BETWEEN ? AND ? LIMIT 1");
+      $t = $start; $tb = 0;
+      $stmt->bind_param("ii", $t, $tb);
+      $stmt->bind_result($dataTime, $dataValue);
       for ($i=0; $i<$dp; $i++)
       {
-        $t = $start + $i*$td;
-        $tb = $start + ($i+1)*$td;
-        $result = $this->mysqli->query("SELECT * FROM $feedname WHERE `time` >$t AND `time` <$tb LIMIT 1");
-
-        if($result){
-          $row = $result->fetch_array();
-          $dataValue = $row['data'];               
+        $tb = $start + intval(($i+1)*$td);
+        $stmt->execute();
+        if ($stmt->fetch()) {
           if ($dataValue!=NULL) { // Remove this to show white space gaps in graph      
-            $time = $row['time'] * 1000;     
-            $data[] = array($time , $dataValue); 
-          } 
-        }         
+            $time = $dataTime * 1000;
+            $data[] = array($time, $dataValue);
+          }
+        }
+        $t = $tb;
       }
     } else {
-      $result = $this->mysqli->query("select * from $feedname WHERE time>$start AND time<$end order by time Desc");
-      while($row = $result->fetch_array()) {
-        $dataValue = $row['data'];
-        $time = $row['time'] * 1000;  
-        $data[] = array($time , $dataValue); 
+      if ($range > 5000 && $dp > 0)
+      {
+        $td = intval($range / $dp);
+        $sql = "SELECT FLOOR(time/$td) AS time, AVG(data) AS data".
+          " FROM $feedname WHERE time BETWEEN $start AND $end".
+          " GROUP BY 1";
+      } else {
+        $td = 1;
+        $sql = "SELECT time, data FROM $feedname".
+          " WHERE time BETWEEN $start AND $end ORDER BY time DESC";
+      }
+     
+      $result = $this->mysqli->query($sql);
+      if($result) {
+        while($row = $result->fetch_array()) {
+          $dataValue = $row['data'];
+          if ($dataValue!=NULL) { // Remove this to show white space gaps in graph      
+            $time = $row['time'] * 1000 * $td;  
+            $data[] = array($time , $dataValue); 
+          }
+        }
       }
     }
 
@@ -427,7 +445,7 @@ class Feed
     $feedid = intval($feedid);
     $feedname = "feed_".trim($feedid)."";
 
-    $points = json_decode($points);
+    $points = json_decode(stripslashes($points));
     
     $data = array();
 
