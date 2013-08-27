@@ -18,14 +18,17 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 class Feed
 {
     private $mysqli;
+    private $timestore;
 
-    public function __construct($mysqli)
+    public function __construct($mysqli,$timestore)
     {
         $this->mysqli = $mysqli;
+        $this->timestore = $timestore;
     }
 
-    public function create($userid,$name,$datatype)
+    public function create($userid,$name,$datatype,$newfeedinterval)
     {
+        $newfeedinterval = (int) $newfeedinterval;
         $userid = intval($userid);
         $name = preg_replace('/[^\w\s-]/','',$name);
         $datatype = intval($datatype);
@@ -34,21 +37,26 @@ class Feed
         $feedid = $this->get_id($userid,$name);
         if ($feedid!=0) return array('success'=>false, 'message'=>'feed already exists');
 
-        $result = $this->mysqli->query("INSERT INTO feeds (userid,name,datatype,public) VALUES ('$userid','$name','$datatype','false')");
+        $result = $this->mysqli->query("INSERT INTO feeds (userid,name,datatype,public,timestore,dpinterval) VALUES ('$userid','$name','$datatype','false','1','$newfeedinterval')");
         $feedid = $this->mysqli->insert_id;
 
         if ($feedid>0) 
         {
           $feedname = "feed_".$feedid;
 
-          if ($datatype!=3) {										
+          if ($datatype==1)
+          {
+            $this->timestore->create_node($feedid,$newfeedinterval);
+          }
+
+          elseif ($datatype==2) {										
             $result = $this->mysqli->query(
             "CREATE TABLE $feedname (
 	      time INT UNSIGNED, data float,
             INDEX ( `time` ))");
           }
 
-          if ($datatype==3) {										
+          elseif ($datatype==3) {										
             $result = $this->mysqli->query(										
             "CREATE TABLE $feedname (
 	      time INT UNSIGNED, data float, data2 float,
@@ -129,7 +137,7 @@ class Feed
   {
     $userid = intval($userid);
 
-    $result = $this->mysqli->query("SELECT id,name,datatype,tag,time,value,public FROM feeds WHERE userid = $userid");
+    $result = $this->mysqli->query("SELECT id,name,datatype,tag,time,value,public,dpinterval,size,`convert`,timestore FROM feeds WHERE userid = $userid");
     if (!$result) return 0;
     $feeds = array();
     while ($row = $result->fetch_object()) 
@@ -137,6 +145,18 @@ class Feed
       // $row->size = get_feedtable_size($row->id);
       $row->time = strtotime($row->time)*1000;
       $row->tag = str_replace(" ","_",$row->tag);
+
+      $row->dpinterval = $row->dpinterval."s";
+      if ($row->dpinterval>=1*3600) $row->dpinterval = round($row->dpinterval / 3600)."h";
+
+      if ($row->size<1024*100) {
+        $row->size = number_format($row->size/1024,1)."kb";
+      } elseif ($row->size<1024*1024) {
+        $row->size = round($row->size/1024)."kb";
+      } elseif ($row->size>=1024*1024) {
+        $row->size = round($row->size/(1024*1024))."Mb";
+      }
+
       $row->public = (bool) $row->public;
       $feeds[] = $row; 
     }
@@ -201,11 +221,14 @@ class Feed
   public function get_field($id,$field)
   {
     $id = intval($id);
-    $field = preg_replace('/[^\w\s-]/','',$field);
 
-    $result = $this->mysqli->query("SELECT `$field` FROM feeds WHERE `id` = '$id'");
-    $row = $result->fetch_array();
-    if ($row) return $row[0]; else return 0;
+    if ($field!=NULL) {
+      $field = preg_replace('/[^\w\s-]/','',$field);
+      $result = $this->mysqli->query("SELECT `$field` FROM feeds WHERE `id` = '$id'");
+      $row = $result->fetch_array();
+      if ($row) return $row[0]; else return 0;
+    }
+    else return false;
   }
 
   public function get_timevalue($id)
@@ -233,6 +256,9 @@ class Feed
     if (isset($fields->name)) $array[] = "`name` = '".preg_replace('/[^\w\s-]/','',$fields->name)."'";
     if (isset($fields->tag)) $array[] = "`tag` = '".preg_replace('/[^\w\s-]/','',$fields->tag)."'";
     if (isset($fields->datatype)) $array[] = "`datatype` = '".intval($fields->datatype)."'";
+
+    if (isset($fields->convert)) $array[] = "`convert` = '".intval($fields->convert)."'";
+
     if (isset($fields->public)) $array[] = "`public` = '".intval($fields->public)."'";
     if (isset($fields->time)) {
       $updatetime = date("Y-n-j H:i:s", intval($fields->time)); 
@@ -268,8 +294,42 @@ class Feed
 
     $feedname = "feed_".trim($feedid)."";
 
+    $qresult = $this->mysqli->query("SELECT timestore FROM feeds WHERE `id` = '$feedid'");
+    $row = $qresult->fetch_array();
+
+    if ($row['timestore']==1) {
+      $this->timestore->post_values($feedid,$feedtime*1000,array($value),null);
+    } else {
+      // a. Insert data value in feed table
+      $this->mysqli->query("INSERT INTO $feedname (`time`,`data`) VALUES ('$feedtime','$value')");
+    }
+
+    // b. Update feeds table
+    $updatetime = date("Y-n-j H:i:s", $updatetime); 
+    $this->mysqli->query("UPDATE feeds SET value = '$value', time = '$updatetime' WHERE id='$feedid'");
+
+    //Check feed event if event module is installed
+    if (is_dir(realpath(dirname(__FILE__)).'/../event/')) {
+      require_once(realpath(dirname(__FILE__)).'/../event/event_model.php');
+      $event = new Event($this->mysqli);
+      $event->check_feed_event($feedid,$updatetime,$feedtime,$value);
+    }
+
+    return $value;
+  }
+
+  public function insert_data_timestore($feedid,$updatetime,$feedtime,$value)
+  { 
+    if ($feedtime == null) $feedtime = time();
+    $feedid = intval($feedid);
+    $updatetime = intval($updatetime);
+    $feedtime = intval($feedtime);
+    $value = floatval($value);
+
+    $feedname = "feed_".trim($feedid)."";
+
     // a. Insert data value in feed table
-    $this->mysqli->query("INSERT INTO $feedname (`time`,`data`) VALUES ('$feedtime','$value')");
+    $this->timestore->post_values($feedid,$feedtime*1000,array($value),null);
 
     // b. Update feeds table
     $updatetime = date("Y-n-j H:i:s", $updatetime); 
@@ -340,7 +400,32 @@ class Feed
     return true;
   }
 
-  public function get_data($feedid,$start,$end,$dp)
+  public function get_data_timestore($feedid,$start,$end,$dp)
+  {
+    $feedid = intval($feedid);
+    $start = intval($start/1000);
+    $end = intval($end/1000);
+    $dp = intval($dp);
+
+    if ($end == 0) $end = time();
+
+    //$result = $this->mysqli->query("SELECT `interval` FROM feeds WHERE id = '$feedid'");
+    //$row = $result->fetch_array();
+
+    $interval = 10;
+    //if (isset($row['interval'])) $interval = $row['interval'];
+
+    $start = round($start/$interval)*$interval;
+    $end = round($end/$interval)*$interval;
+    $npoints = round(($end - $start) / $interval);
+ 
+    if ($npoints>1000) $npoints = 1000;
+
+    $data = json_decode($this->timestore->get_series($feedid,0,$npoints,$start,$end,null));
+    return $data;
+  }
+
+  public function get_data_mysql($feedid,$start,$end,$dp)
   {
     $feedid = intval($feedid);
     $start = floatval($start);
@@ -516,6 +601,13 @@ class Feed
     $this->mysqli->query("DROP TABLE feed_".$feedid);
   }
 
+  public function delete_timestore($feedid)
+  {
+    $feedid = intval($feedid);
+    $this->mysqli->query("DELETE FROM feeds WHERE id = '$feedid'");
+    $this->timestore->delete_node($feedid);
+  }
+
   public function export($feedid,$start)
   {
       // Feed id and start time of feed to export
@@ -527,8 +619,8 @@ class Feed
       set_time_limit (120);
 
       // Regulate mysql and apache load.
-      $block_size = 1000;
-      $sleep = 20000;
+      $block_size = 400;
+      $sleep = 80000;
 
       $feedname = "feed_".trim($feedid)."";
       $fileName = $feedname.'.csv';
@@ -576,6 +668,105 @@ class Feed
 
       fclose($fh);
       exit;
+  }
+
+  public function export_timestore($feedid,$layer,$start)
+  {
+    $feedid = (int) $feedid;
+    $layer = (int) $layer;
+    $start = (int) $start;
+    
+    $meta = $this->get_timestore_meta($feedid);
+    
+    $feedname = str_pad($feedid, 16, '0', STR_PAD_LEFT)."_".$layer."_.dat";
+
+    // There is no need for the browser to cache the output
+    header("Cache-Control: no-cache, no-store, must-revalidate");
+
+    // Tell the browser to handle output as a csv file to be downloaded
+    header('Content-Description: File Transfer');
+    header("Content-type: application/octet-stream");
+    header("Content-Disposition: attachment; filename={$feedname}");
+
+    header("Expires: 0");
+    header("Pragma: no-cache");
+
+    // Write to output stream
+    $fh = @fopen( 'php://output', 'w' );
+
+    $primaryfeedname = "/var/lib/timestore/$feedname";
+    $primary = fopen($primaryfeedname, 'rb');
+    $primarysize = filesize($primaryfeedname);
+    
+    //$localsize = intval((($start - $meta['start']) / $meta['interval']) * 4);
+    
+    $localsize = $start;
+    $localsize = intval($localsize / 4) * 4;
+    if ($localsize<0) $localsize = 0;
+
+    fseek($primary,$localsize);
+    $left_to_read = $primarysize - $localsize;
+    if ($left_to_read>0){
+      do
+      {
+        if ($left_to_read>8192) $readsize = 8192; else $readsize = $left_to_read;
+        $left_to_read -= $readsize;
+
+        $data = fread($primary,$readsize);
+        fwrite($fh,$data);
+      }
+      while ($left_to_read>0);
+    }
+    fclose($primary);
+    fclose($fh);
+    exit;
+  }
+  
+  public function export_timestore_meta($feedid)
+  {
+    $feedid = (int) $feedid;
+
+    $feedname = str_pad($feedid, 16, '0', STR_PAD_LEFT).".tsdb";
+
+    // There is no need for the browser to cache the output
+    header("Cache-Control: no-cache, no-store, must-revalidate");
+
+    // Tell the browser to handle output as a csv file to be downloaded
+    header('Content-Description: File Transfer');
+    header("Content-type: application/octet-stream");
+    header("Content-Disposition: attachment; filename={$feedname}");
+
+    header("Expires: 0");
+    header("Pragma: no-cache");
+
+    $fh = @fopen( 'php://output', 'w' );
+    $meta = fopen("/var/lib/timestore/$feedname", 'rb');
+    fwrite($fh,fread($meta,272));
+
+    fclose($meta);
+    fclose($fh);
+    exit;
+  }
+  
+  public function get_timestore_meta($feedid)
+  {
+    $feedid = (int) $feedid;
+    $feedname = str_pad($feedid, 16, '0', STR_PAD_LEFT).".tsdb";
+
+    $out = array();
+    $meta = fopen("/var/lib/timestore/$feedname", 'rb');
+
+    fseek($meta,20);
+    $tmp = unpack("I",fread($meta,4)); 
+    $out['npoints'] = $tmp[1];
+    $tmp = unpack("I",fread($meta,8)); 
+    $out['start'] = $tmp[1];
+    $tmp = unpack("I",fread($meta,4)); 
+    $out['interval'] = $tmp[1];
+    fclose($meta);
+    
+   
+    return $out;
   }
 
 }

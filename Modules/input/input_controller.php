@@ -33,11 +33,14 @@ function input_controller()
   // There are no actions in the input module that can be performed with less than write privileges
   if (!$session['write']) return array('content'=>false);
 
-  global $feed;
+  global $feed, $timestore_adminkey;
   $result = false;
 
-  require "Modules/feed/feed_model.php"; // 540
-  $feed = new Feed($mysqli);
+  require "Modules/feed/timestore_class.php";
+  $timestore = new Timestore($timestore_adminkey);
+
+  include "Modules/feed/feed_model.php";
+  $feed = new Feed($mysqli,$timestore);
 
   require "Modules/input/input_model.php"; // 295
   $input = new Input($mysqli,$feed);
@@ -194,15 +197,18 @@ function input_controller()
       }
 
       if ($route->action == "list") $result = $input->getlist($session['userid']);
+      
+      if ($route->action == "deletenode") $result = $input->delete_node($session['userid'],get("nodeid"));
 
       if (isset($_GET['inputid']) && $input->belongs_to_user($session['userid'],get("inputid")))
       {
           if ($route->action == "delete") $result = $input->delete($session['userid'],get("inputid"));
+
           if ($route->action == 'set') $result = $input->set_fields(get('inputid'),get('fields'));
 
           if ($route->action == "process")
           { 
-              if ($route->subaction == "add") $result = $input->add_process($process,$session['userid'], get('inputid'), get('processid'), get('arg'), get('newfeedname'));
+              if ($route->subaction == "add") $result = $input->add_process($process,$session['userid'], get('inputid'), get('processid'), get('arg'), get('newfeedname'), get('newfeedinterval'));
               if ($route->subaction == "list") $result = $input->get_processlist_desc($process, get("inputid"));
               if ($route->subaction == "delete") $result = $input->delete_process(get("inputid"),get('processid'));
               if ($route->subaction == "move") $result = $input->move_process(get("inputid"),get('processid'),get('moveby'));
